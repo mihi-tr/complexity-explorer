@@ -1,9 +1,10 @@
 
-globals [ dist v new-v]
+globals [ dist v new-v stack]
 
 to setup
   clear-all
   reset-ticks
+  set stack (list)
   set dist initial-distance
   set v setup-string
   create-turtles 1 [
@@ -89,7 +90,7 @@ to reset-position
   pu
   set heading 90
   set xcor initial-x
-  set ycor initial-x
+  set ycor initial-y
 end
 
 to obey-string
@@ -109,6 +110,12 @@ to obey-string
     ]
     if action = "-" [
       minus
+    ]
+    if action = "[" [
+      push
+    ]
+    if action = "]" [
+      pop
     ]
   ]
 end
@@ -133,6 +140,22 @@ end
 to minus
   ; action for -
   right angle-increment
+end
+
+to push
+  ;action for [
+  set stack lput (list xcor ycor heading) stack
+end
+
+to pop
+  ;action for ]
+  pu
+  let tm last stack
+  set stack but-last stack
+  set xcor item 0 tm
+  set ycor item 1 tm
+  set heading item 2 tm
+  
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -178,7 +201,7 @@ INPUTBOX
 179
 220
 setup-string
-F
+[F]---[F]---[F]---[F]
 1
 0
 String
@@ -189,7 +212,7 @@ INPUTBOX
 195
 324
 transformation
-F -> F+F--F+F
+F -> F[+F][-F]F
 1
 1
 String
@@ -237,7 +260,7 @@ angle-increment
 angle-increment
 0
 360
-60
+30
 1
 1
 NIL
@@ -252,7 +275,7 @@ initial-distance
 initial-distance
 0
 world-width
-30
+15
 1
 1
 NIL
@@ -267,7 +290,7 @@ division
 division
 0
 10.0
-3
+2
 1.0
 1
 NIL
@@ -282,7 +305,7 @@ initial-x
 initial-x
 - (world-width / 2)
 (world-width / 2)
--15
+0.5
 1
 1
 NIL
@@ -304,6 +327,21 @@ Current Sentence
 12
 0.0
 1
+
+SLIDER
+10
+473
+182
+506
+initial-y
+initial-y
+(world-width / -2)
+(world-width / 2)
+0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
