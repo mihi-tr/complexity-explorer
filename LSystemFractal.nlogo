@@ -15,7 +15,6 @@ to setup
 end
 
 to iterate
-  
   set dist (dist / division)
   set v transform-v v
   clear-output
@@ -24,23 +23,24 @@ to iterate
   ask turtles [
     reset-position
     obey-string
-
   ]
   tick
 end
 
 to-report transform-v [ov]
-  let tv ov
+  ; transform the string into the new version of the string
   let nv ""
-  repeat length tv [
-    set nv word nv apply-rule first tv
-    set tv but-first tv
+  let rules split-rules transformation ; create a list of rules
+  repeat length ov [
+    ; iterate through each letter and construct the new command string
+    set nv word nv apply-rule first ov rules
+    set ov but-first ov
   ]
   report nv
 end
 
-to-report apply-rule [c]
-  let rules split-rules transformation
+to-report apply-rule [c rules]
+  ; Apply a matching rule to the letter
   let r c
   foreach rules 
   [
@@ -53,13 +53,15 @@ to-report apply-rule [c]
 end
 
 to-report get-rule [s]
+  ; return the rule from a rule string, formatted as x -> x'
   let p position "->" s
   report substring s (p + 3) length s
 end
 
 to-report split-rules [r]
+  ; split the rules into an array of rules (split on linebreak)
   let rl (list r)
-  while [has-linebreak? last rl != false]
+  while [has-linebreak? last rl]
    [
      let tl split-on-linebreak last rl
      
@@ -70,6 +72,7 @@ to-report split-rules [r]
 end
 
 to-report split-on-linebreak [s]
+  ; split a string on linebreak
   let p position "\n" s
   ifelse p != false 
    [report list (substring s 0 p) (substring s (p + 1) length s)]
@@ -77,10 +80,12 @@ to-report split-on-linebreak [s]
 end
 
 to-report has-linebreak? [s]
-  report position "\n" s
+  ; return true if there is a linebreak
+  report (position "\n" s) != false
 end
 
 to reset-position
+  ;set the turtle to it's initial position
   pu
   set heading 90
   set xcor initial-x
@@ -88,8 +93,10 @@ to reset-position
 end
 
 to obey-string
+  ;do what the string tells you
   let tv v
   repeat length tv [
+    ; iterate through the string and perform _all_ the actions
     let action first tv
     set tv but-first tv
     if action = "F" [
@@ -107,20 +114,24 @@ to obey-string
 end
 
 to fc
+  ; action for F
   pen-down
   forward dist
 end
 
 to fl
+  ; action for f
   pen-up
   forward dist
 end
 
 to plus
+  ; action for +
   left angle-increment
 end
 
 to minus
+  ; action for -
   right angle-increment
 end
 @#$#@#$#@
