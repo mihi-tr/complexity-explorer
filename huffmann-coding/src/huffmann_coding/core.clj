@@ -117,6 +117,7 @@
 (defn compare-sh
   "compares shannon information and huffmann-coding bitlength for a string"
   [s]
+  (println s)
   {:shannon (shannon-information s)
    :huffmann (float (bit-length s))
    :sentence s})
@@ -124,9 +125,14 @@
 (defn do-comparison
   "compare text of a file"
   ([file]
-  (map compare-sh (clojure.string/split (slurp file) #"\.")))
+     (map compare-sh
+          (with-open 
+              [r (clojure.java.io/reader file)]
+            (filter (fn [x] (> (count x) 2))
+                    
+            (reduce conj [] (line-seq r))))))
   ([file outfile]
-     (with-open [w (java.io.FileWriter. outfile)]
+     (with-open [w (clojure.java.io/writer outfile)]
        (doseq [x (do-comparison file)] 
          (.write w (str 
                     (clojure.string/join "," 
